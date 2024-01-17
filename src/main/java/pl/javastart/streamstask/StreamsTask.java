@@ -2,6 +2,7 @@ package pl.javastart.streamstask;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class StreamsTask {
@@ -64,14 +65,9 @@ public class StreamsTask {
     // metoda powinna zwracać wydatki zgrupowane po użytkowniku
     // podobne do poprzedniego, ale trochę trudniejsze
     Map<User, List<Expense>> groupExpensesByUser(Collection<User> users, List<Expense> expenses) {
+        Map<Long, User> userMap = users.stream()
+                .collect(Collectors.toMap(User::getId, Function.identity()));
         return expenses.stream()
-                .collect(Collectors.groupingBy(expense -> findUserById(users, expense.getUserId())));
-    }
-
-    private User findUserById(Collection<User> users, Long userId) {
-        return users.stream()
-                .filter(user -> Objects.equals(user.getId(), userId))
-                .findFirst()
-                .orElse(null);
+                .collect(Collectors.groupingBy(expense -> userMap.get(expense.getUserId())));
     }
 }
